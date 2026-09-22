@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+import { 
+  Plane, 
+  ShieldCheck, 
+  Globe, 
+  Headphones, 
+  Award, 
+  Clock, 
+  User, 
+  Lock, 
+  Star 
+} from 'lucide-react';
 import './App.css';
 
 interface BookingFormData {
@@ -31,28 +42,59 @@ interface BookingRecord {
   phone: string;
 }
 
-// US Airports for Departure
-const usAirports = [
-  { code: 'JFK', name: 'New York (JFK) - USA' },
-  { code: 'LAX', name: 'Los Angeles (LAX) - USA' },
-  { code: 'ORD', name: 'Chicago (ORD) - USA' },
-  { code: 'MIA', name: 'Miami (MIA) - USA' },
-  { code: 'SFO', name: 'San Francisco (SFO) - USA' },
-  { code: 'DFW', name: 'Dallas (DFW) - USA' },
-  { code: 'BOS', name: 'Boston (BOS) - USA' },
-  { code: 'LAS', name: 'Las Vegas (LAS) - USA' }
+const flyingFromOptions = [
+  "Changi Airport – Singapore",
+  "Incheon International Airport – Seoul, South Korea",
+  "Haneda Airport – Tokyo, Japan",
+  "Hamad International Airport – Doha, Qatar",
+  "Dubai International Airport – Dubai, UAE",
+  "Hong Kong International Airport – Hong Kong",
+  "Kuala Lumpur International Airport – Malaysia",
+  "Suvarnabhumi Airport – Bangkok, Thailand",
+  "Beijing Capital International Airport – Beijing, China",
+  "Indira Gandhi International Airport – Delhi, India",
+  "Heathrow Airport – London, United Kingdom",
+  "Charles de Gaulle Airport – Paris, France",
+  "Frankfurt Airport – Frankfurt, Germany",
+  "Schiphol Airport – Amsterdam, Netherlands",
+  "Istanbul Airport – Istanbul, Turkey",
+  "John F. Kennedy International Airport (JFK) – New York, USA",
+  "Los Angeles International Airport (LAX) – Los Angeles, USA",
+  "Hartsfield-Jackson Atlanta International Airport – Atlanta, USA",
+  "Toronto Pearson International Airport – Toronto, Canada",
+  "Sydney Kingsford Smith Airport – Sydney, Australia"
 ];
 
-// International & Destination Airports
-const destinationAirports = [
-  { code: 'ISB', name: 'Islamabad (ISB) - Pakistan' },
-  { code: 'LHE', name: 'Lahore (LHE) - Pakistan' },
-  { code: 'DXB', name: 'Dubai (DXB) - UAE' },
-  { code: 'LHR', name: 'London (LHR) - UK' },
-  { code: 'YYZ', name: 'Toronto (YYZ) - Canada' },
-  { code: 'JFK', name: 'New York (JFK) - USA' },
-  { code: 'LAX', name: 'Los Angeles (LAX) - USA' },
-  { code: 'ORD', name: 'Chicago (ORD) - USA' }
+const flyingToOptions = [
+  "United States (USA)",
+  "United Kingdom (UK)",
+  "United Arab Emirates (UAE)",
+  "Saudi Arabia",
+  "India",
+  "China",
+  "Canada",
+  "Germany",
+  "France",
+  "Qatar",
+  "Singapore",
+  "Turkey",
+  "Japan",
+  "Thailand",
+  "Australia",
+  "Malaysia",
+  "Netherlands",
+  "South Korea",
+  "Italy",
+  "Spain",
+  "Oman",
+  "Kuwait",
+  "Bahrain",
+  "Indonesia",
+  "Switzerland",
+  "Egypt",
+  "South Africa",
+  "Brazil",
+  "Mexico"
 ];
 
 function App() {
@@ -63,14 +105,13 @@ function App() {
   const [authError, setAuthError] = useState('');
   const [authSuccess, setAuthSuccess] = useState('');
 
-  // Admin Password Change States
   const [currentAdminPass, setCurrentAdminPass] = useState('');
   const [newAdminPass, setNewAdminPass] = useState('');
   const [adminPassMsg, setAdminPassMsg] = useState('');
   const [adminPassError, setAdminPassError] = useState('');
 
   const [formData, setFormData] = useState<BookingFormData>({
-    from_city: 'New York (JFK) - USA',
+    from_city: 'Changi Airport – Singapore',
     to_city: '',
     departing_date: '',
     returning_date: '',
@@ -83,8 +124,7 @@ function App() {
     phone: ''
   });
 
-  // Searchable Dropdown States
-  const [fromSearch, setFromSearch] = useState('New York (JFK) - USA');
+  const [fromSearch, setFromSearch] = useState('Changi Airport – Singapore');
   const [showFromList, setShowFromList] = useState(false);
 
   const [toSearch, setToSearch] = useState('');
@@ -94,7 +134,6 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [allBookings, setAllBookings] = useState<BookingRecord[]>([]);
 
-  // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -122,7 +161,6 @@ function App() {
     }
   };
 
-  // Handle Signup
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
@@ -155,7 +193,6 @@ function App() {
     }
   };
 
-  // Handle Admin Password Change
   const handleAdminPasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdminPassMsg('');
@@ -180,7 +217,6 @@ function App() {
     }
   };
 
-  // Fetch Bookings for Admin
   const fetchBookings = async () => {
     try {
       const res = await fetch('http://localhost:5000/api/bookings');
@@ -222,7 +258,6 @@ function App() {
     setView('login');
   };
 
-  // 1. LOGIN SCREEN
   if (view === 'login') {
     return (
       <div className="auth-container">
@@ -230,41 +265,46 @@ function App() {
           <img src="/logo.png" alt="Meer Travels Logo" className="nav-logo" style={{ margin: '0 auto 15px auto', display: 'block', height: '60px' }} />
           <h2>Meer International</h2>
           <p>Login to your account</p>
-         <form onSubmit={handleLogin}>
-            <input 
-              type="text" 
-              name="username"
-              placeholder="Username" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
-              autoComplete="username"
-              required 
-            />
-            <input 
-              type={showPassword ? "text" : "password"} 
-              name="password"
-              placeholder="Password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              autoComplete="current-password"
-              required 
-            />
+          <form onSubmit={handleLogin}>
+            <div className="input-with-icon">
+              <User size={18} className="field-icon" />
+              <input 
+                type="text" 
+                name="username"
+                placeholder="Username" 
+                value={username} 
+                onChange={(e) => setUsername(e.target.value)} 
+                autoComplete="username"
+                required 
+              />
+            </div>
+            <div className="input-with-icon">
+              <Lock size={18} className="field-icon" />
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password"
+                placeholder="Password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                autoComplete="current-password"
+                required 
+              />
+            </div>
             <div className="show-pass-row">
               <label>
                 <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} /> Show Password
               </label>
             </div>
             <button type="submit" className="book-btn">Login</button>
-         </form>
-         {authError && <p className="error-msg">{authError}</p>}
-         {authSuccess && <p className="success-msg">{authSuccess}</p>}
-         <p className="switch-text">Don't have an account? <span onClick={() => { setView('signup'); setAuthError(''); setAuthSuccess(''); setPassword(''); }}>Sign up</span></p>
+          </form>
+          {authError && <p className="error-msg">{authError}</p>}
+          {authSuccess && <p className="success-msg">{authSuccess}</p>}
+          <p className="switch-text">Don't have an account? <span onClick={() => { setView('signup'); setAuthError(''); setAuthSuccess(''); setPassword(''); }}>Sign up</span></p>
         </div>
       </div>
     );
   }
 
-  // 2. SIGNUP SCREEN
   if (view === 'signup') {
     return (
       <div className="auth-container">
@@ -273,8 +313,14 @@ function App() {
           <h2>Meer International</h2>
           <p>Create a new user account</p>
           <form onSubmit={handleSignup}>
-            <input type="text" placeholder="Choose Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            <input type={showPassword ? "text" : "password"} placeholder="Choose Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            <div className="input-with-icon">
+              <User size={18} className="field-icon" />
+              <input type="text" placeholder="Choose Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+            </div>
+            <div className="input-with-icon">
+              <Lock size={18} className="field-icon" />
+              <input type={showPassword ? "text" : "password"} placeholder="Choose Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
             <div className="show-pass-row">
               <label>
                 <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} /> Show Password
@@ -290,7 +336,6 @@ function App() {
     );
   }
 
-  // 3. ADMIN DASHBOARD SCREEN
   if (view === 'admin-dashboard') {
     return (
       <div className="travel-app">
@@ -369,7 +414,6 @@ function App() {
     );
   }
 
-  // 4. USER HOMEPAGE & BOOKING SCREEN (Matching your CSS layouts)
   return (
     <div className="travel-app">
       <nav className="navbar">
@@ -378,15 +422,18 @@ function App() {
           <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0b192c', marginLeft: '10px' }}>Meer International</span>
         </div>
         
-        <ul className="nav-links">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#destinations">Destinations</a></li>
-          <li><a href="#features">Services</a></li>
-        </ul>
+        <div className="nav-right-group">
+          <ul className="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#features">Services</a></li>
+            <li><a href="#destinations">Destinations</a></li>
+          </ul>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0b192c' }}>Hi, {username}</span>
-          <button onClick={logout} className="logout-btn-nav">Logout</button>
+          <div className="user-profile-nav">
+            <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#0b192c' }}>Hi, {username}</span>
+            <button onClick={logout} className="logout-btn-nav">Logout</button>
+          </div>
         </div>
       </nav>
 
@@ -397,12 +444,11 @@ function App() {
           
           {!confirmedBooking ? (
             <form className="search-form" onSubmit={handleSubmitBooking}>
-              
               <div className="form-group" style={{ position: 'relative' }}>
                 <label>Flying From *</label>
                 <input 
                   type="text" 
-                  placeholder="Search US airport..." 
+                  placeholder="Search departure airport..." 
                   value={fromSearch}
                   onChange={(e) => {
                     setFromSearch(e.target.value);
@@ -413,18 +459,18 @@ function App() {
                 />
                 {showFromList && (
                   <ul className="dropdown-search-list">
-                    {usAirports
-                      .filter(a => a.name.toLowerCase().includes(fromSearch.toLowerCase()))
-                      .map(airport => (
+                    {flyingFromOptions
+                      .filter(item => item.toLowerCase().includes(fromSearch.toLowerCase()))
+                      .map((airport, index) => (
                         <li 
-                          key={airport.code} 
+                          key={index} 
                           onClick={() => {
-                            setFromSearch(airport.name);
-                            setFormData({ ...formData, from_city: airport.name });
+                            setFromSearch(airport);
+                            setFormData({ ...formData, from_city: airport });
                             setShowFromList(false);
                           }}
                         >
-                          {airport.name}
+                          {airport}
                         </li>
                       ))}
                   </ul>
@@ -435,7 +481,7 @@ function App() {
                 <label>Flying To *</label>
                 <input 
                   type="text" 
-                  placeholder="Search destination airport..." 
+                  placeholder="Search destination country..." 
                   value={toSearch}
                   onChange={(e) => {
                     setToSearch(e.target.value);
@@ -446,18 +492,18 @@ function App() {
                 />
                 {showToList && (
                   <ul className="dropdown-search-list">
-                    {destinationAirports
-                      .filter(a => a.name.toLowerCase().includes(toSearch.toLowerCase()))
-                      .map(airport => (
+                    {flyingToOptions
+                      .filter(item => item.toLowerCase().includes(toSearch.toLowerCase()))
+                      .map((country, index) => (
                         <li 
-                          key={airport.code} 
+                          key={index} 
                           onClick={() => {
-                            setToSearch(airport.name);
-                            setFormData({ ...formData, to_city: airport.name });
+                            setToSearch(country);
+                            setFormData({ ...formData, to_city: country });
                             setShowToList(false);
                           }}
                         >
-                          {airport.name}
+                          {country}
                         </li>
                       ))}
                   </ul>
@@ -530,7 +576,7 @@ function App() {
           ) : (
             <div className="ticket-slip">
               <div className="ticket-header">
-                <h2>✈ Booking Confirmed!</h2>
+                <h2><Plane size={24} style={{ verticalAlign: 'middle', marginRight: '8px' }} /> Booking Confirmed!</h2>
                 <p>Booking ID: #{confirmedBooking.bookingId}</p>
               </div>
               <div className="ticket-body" style={{ lineHeight: '1.8' }}>
@@ -551,41 +597,75 @@ function App() {
         </div>
       </header>
 
-      {/* Features Section */}
       <section id="features" className="features-section">
         <div className="features-container">
           <div className="feature-box">
-            <div className="feature-icon">✈</div>
+            <div className="feature-icon"><Plane size={28} /></div>
             <h3>Best Flight Deals</h3>
+            <p>Access competitive airfares across major global carriers.</p>
           </div>
           <div className="feature-box">
-            <div className="feature-icon">🛡</div>
+            <div className="feature-icon"><ShieldCheck size={28} /></div>
             <h3>Secure Booking</h3>
+            <p>Your transactions and personal info are fully encrypted.</p>
           </div>
           <div className="feature-box">
-            <div className="feature-icon">🌍</div>
+            <div className="feature-icon"><Globe size={28} /></div>
             <h3>Global Destinations</h3>
+            <p>Fly to thousands of destinations worldwide seamlessly.</p>
           </div>
           <div className="feature-box">
-            <div className="feature-icon">💬</div>
+            <div className="feature-icon"><Headphones size={28} /></div>
             <h3>24/7 Support</h3>
+            <p>Our support team is always ready to assist you anytime.</p>
+          </div>
+          <div className="feature-box">
+            <div className="feature-icon"><Award size={28} /></div>
+            <h3>Trusted Agency</h3>
+            <p>Recognized for exceptional service quality and reliability.</p>
+          </div>
+          <div className="feature-box">
+            <div className="feature-icon"><Clock size={28} /></div>
+            <h3>Instant Confirmation</h3>
+            <p>Receive your verifiable ticket slip right after booking.</p>
           </div>
         </div>
       </section>
 
-      {/* Popular Destinations Section */}
-      <section id="destinations" className="destinations-section">
+      <section className="partner-section">
+        <div className="partner-container">
+          <div className="partner-content">
+            <span className="destinations-subtitle">WHO WE ARE</span>
+            <h2>Providing Unforgettable Travel Experiences Since 2015</h2>
+            <p>
+              At Meer International Travels, we specialize in offering comprehensive and seamless flight booking solutions. Whether you're planning a corporate retreat, a family holiday, or an international adventure, our dedicated team ensures your travel is smooth from takeoff to landing.
+            </p>
+            <ul className="partner-features-list">
+              <li>✓ Trusted global airline partnerships</li>
+              <li>✓ Transparent pricing with zero hidden fees</li>
+              <li>✓ Dedicated customer service and guidance</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="destinations-section">
         <div className="destinations-container">
-          <span className="destinations-subtitle">Explore Top Places</span>
+          <span className="destinations-subtitle">EXPLORE TOP PLACES</span>
           <h2>Popular Destinations</h2>
           <div className="destinations-grid">
             <div className="destination-card">
               <div className="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34" alt="Paris" />
+                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34" alt="Paris, France" />
               </div>
               <div className="card-content">
                 <div className="rating">
-                  <i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span>(4.9)</span>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(4.9)</span>
                 </div>
                 <h3>Paris, France</h3>
               </div>
@@ -593,11 +673,16 @@ function App() {
 
             <div className="destination-card">
               <div className="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c" alt="Dubai" />
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c" alt="Dubai, UAE" />
               </div>
               <div className="card-content">
                 <div className="rating">
-                  <i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span>(4.8)</span>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(4.8)</span>
                 </div>
                 <h3>Dubai, UAE</h3>
               </div>
@@ -605,13 +690,110 @@ function App() {
 
             <div className="destination-card">
               <div className="image-wrapper">
-                <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856" alt="New York" />
+                <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9" alt="New York, USA" />
               </div>
               <div className="card-content">
                 <div className="rating">
-                  <i>★</i><i>★</i><i>★</i><i>★</i><i>★</i><span>(4.9)</span>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(4.9)</span>
                 </div>
                 <h3>New York, USA</h3>
+              </div>
+            </div>
+
+            <div className="destination-card">
+              <div className="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1533929736458-ca588d08c8be" alt="London, UK" />
+              </div>
+              <div className="card-content">
+                <div className="rating">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(4.7)</span>
+                </div>
+                <h3>London, UK</h3>
+              </div>
+            </div>
+
+            <div className="destination-card">
+              <div className="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1514282401047-d79a71a590e8" alt="Maldives" />
+              </div>
+              <div className="card-content">
+                <div className="rating">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(5.0)</span>
+                </div>
+                <h3>Maldives</h3>
+              </div>
+            </div>
+
+            <div className="destination-card">
+              <div className="image-wrapper">
+                <img src="https://images.unsplash.com/photo-1539037116277-4db20889f2d4" alt="Switzerland" />
+              </div>
+              <div className="card-content">
+                <div className="rating">
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <i className="fas fa-star"></i>
+                  <span>(4.9)</span>
+                </div>
+                <h3>Switzerland</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="tourist-blog-section">
+        <div className="tourist-blog-container">
+          <h2 className="blog-title">Tourist Blog</h2>
+          <div className="blog-grid">
+            <div className="blog-card">
+              <div className="blog-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Traveling with kids" />
+              </div>
+              <div className="blog-content-box">
+                <div className="blog-date-badge">
+                  <span className="blog-day">24</span>
+                  <span className="blog-month">Nov</span>
+                </div>
+                <div className="blog-text-content">
+                  <span className="blog-category">| Traveling</span>
+                  <h3>Tips For Taking A Long-Term Trip With Kids.</h3>
+                  <a href="#read-more" className="read-more-link">READ MORE »</a>
+                </div>
+              </div>
+            </div>
+
+            <div className="blog-card">
+              <div className="blog-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828" alt="Traveling tips" />
+              </div>
+              <div className="blog-content-box">
+                <div className="blog-date-badge">
+                  <span className="blog-day">24</span>
+                  <span className="blog-month">Nov</span>
+                </div>
+                <div className="blog-text-content">
+                  <span className="blog-category">| Traveling</span>
+                  <h3>Tips For Taking A Long-Term Trip With Kids.</h3>
+                  <a href="#read-more" className="read-more-link">READ MORE »</a>
+                </div>
               </div>
             </div>
           </div>
@@ -619,7 +801,34 @@ function App() {
       </section>
 
       <footer className="footer">
-        <p>&copy; 2026 Meer International Travels. All rights reserved.</p>
+        <div className="footer-container">
+          <div className="footer-col footer-brand">
+            <img src="logo.png" alt="Travels Vista" className="footer-logo" />
+          </div>
+
+          <div className="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#destinations">Destinations</a></li>
+              <li><a href="#contact">Contact Us</a></li>
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h3>Support</h3>
+            <ul>
+              <li><a href="#faq">Frequently Asked Questions</a></li>
+              <li><a href="#terms">Terms & Conditions</a></li>
+              <li><a href="#privacy">Privacy Policy</a></li>
+              <li><a href="#payment-issue">Report a Payment Issue</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <p>Copyright &copy; 2026 All rights reserved meertravel.co.uk</p>
+        </div>
       </footer>
     </div>
   );
